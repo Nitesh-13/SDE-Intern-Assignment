@@ -18,10 +18,13 @@ mongo = PyMongo(app)
 # GET /users Endpoint - Returns a list of all users.
 @app.route('/users', methods=['GET'])
 def get_all_users():
-    users = mongo.db[collection_name].find()
-    output = []
-    for user in users:
-        output.append({'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']})
+    try:
+        users = mongo.db[collection_name].find()
+        output = []
+        for user in users:
+            output.append({'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']})
+    except:
+        output = "Some error has occured..."
     return jsonify({'result': output})
 
 
@@ -32,11 +35,14 @@ def get_all_users():
 # GET /users/<id> Endpoint - Returns the user with the specified ID.
 @app.route('/users/<id>', methods=['GET'])
 def get_user(id):
-    user = mongo.db[collection_name].find({'id': int(id)}).limit(1)
-    if user:
-        output = {'id': user[0]['id'], 'name': user[0]['name'], 'email': user[0]['email'], 'password': user[0]['password']}
-    else:
-        output = "No such user"
+    try:
+        user = mongo.db[collection_name].find_one({'id':int(id)})
+        if user:
+            output = {'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']}
+        else:
+            output = "User not found!"
+    except:
+        output = "Some error has occured..."
     return jsonify({'result': output})
 
 
@@ -47,7 +53,11 @@ def get_user(id):
 # POST /users Endpoint - Creates a new user with the specified data.
 @app.route('/users', methods=['POST'])
 def add_user():
-    print("Creates a new user with the specified data.")
+    id = request.json['id']
+    name = request.json['name']
+    email = request.json['email']
+    password = request.json['password']
+    print(id,name,email,password)
 
 
 
