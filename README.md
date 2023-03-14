@@ -77,8 +77,9 @@ DELETE http://localhost:5000/users/4
 
 Requests received through postman.
 
-![Requests received from postman](images/requests.jpg)
+You can download and import the `Flask_Mongo_API.postman_collection.json` file inside the Postman to test out the api endpoints with different type of results.
 
+![Requests received from postman](images/requests.jpg)
 
 All tests passed inside Postman for all endpoints
 ![All Users Endpoint Test](images/all_users.jpg)
@@ -89,4 +90,4 @@ All tests passed inside Postman for all endpoints
 
 ![Update User Postman tests](images/update_user.jpg)
 
-![1678825110591](image/README/1678825110591.png)
+![Delete User Postman Tests](images/delete_user.jpg)
