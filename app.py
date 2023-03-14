@@ -53,11 +53,20 @@ def get_user(id):
 # POST /users Endpoint - Creates a new user with the specified data.
 @app.route('/users', methods=['POST'])
 def add_user():
-    id = request.json['id']
-    name = request.json['name']
-    email = request.json['email']
-    password = request.json['password']
-    print(id,name,email,password)
+    try:
+        id = request.json['id']
+        name = request.json['name']
+        email = request.json['email']
+        password = request.json['password']
+        user = mongo.db[collection_name].find_one({'id': int(id)})
+        if user:
+            output = "User already exists"
+        else:
+            mongo.db[collection_name].insert_one({'id': id, 'name': name, 'email': email, 'password': password})
+            output = "User added successfully"
+    except:
+        output = "Some error has occured..."
+    return jsonify({'result': output})
 
 
 
