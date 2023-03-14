@@ -23,8 +23,8 @@ def get_all_users():
         output = []
         for user in users:
             output.append({'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']})
-    except:
-        output = "Some error has occured..."
+    except Exception as e:
+        output = f"Some error has occurred: {e}"
     return jsonify({'result': output})
 
 
@@ -41,11 +41,9 @@ def get_user(id):
             output = {'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']}
         else:
             output = "User not found!"
-    except:
-        output = "Some error has occured..."
+    except Exception as e:
+        output = f"Some error has occurred: {e}"
     return jsonify({'result': output})
-
-
 
 
 
@@ -64,8 +62,8 @@ def add_user():
         else:
             mongo.db[collection_name].insert_one({'id': id, 'name': name, 'email': email, 'password': password})
             output = "User added successfully"
-    except:
-        output = "Some error has occured..."
+    except Exception as e:
+        output = f"Some error has occurred: {e}"
     return jsonify({'result': output})
 
 
@@ -75,7 +73,23 @@ def add_user():
 # PUT /users/<id> Endpoint - Updates the user with the specified ID with the new data.
 @app.route('/users/<id>', methods=['PUT'])
 def update_user(id):
-    print("Updates the user with the specified ID with the new data.")
+    try:
+        user = mongo.db[collection_name].find_one({'id': int(id)})
+        if user:
+            name = request.json.get('name', user.get('name'))
+            email = request.json.get('email', user.get('email'))
+            password = request.json.get('password', user.get('password'))
+            mongo.db[collection_name].update_one(
+                {'id': id},
+                {'$set': {'name': name, 'email': email, 'password': password}}
+            )
+            output = "User updated successfully"
+        else:
+            output = "User not found!"
+    except Exception as e:
+        output = f"Some error has occurred: {e}"
+    return jsonify({'result': output})
+
 
 
 
