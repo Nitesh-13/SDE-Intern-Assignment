@@ -32,7 +32,12 @@ def get_all_users():
 # GET /users/<id> Endpoint - Returns the user with the specified ID.
 @app.route('/users/<id>', methods=['GET'])
 def get_user(id):
-    print("Returns the user with the specified ID.")
+    user = mongo.db[collection_name].find({'id': int(id)}).limit(1)
+    if user:
+        output = {'id': user[0]['id'], 'name': user[0]['name'], 'email': user[0]['email'], 'password': user[0]['password']}
+    else:
+        output = "No such user"
+    return jsonify({'result': output})
 
 
 
@@ -66,4 +71,4 @@ def delete_user(id):
 
 # Start the Flask Application
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
