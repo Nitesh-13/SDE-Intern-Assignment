@@ -1,11 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_pymongo import PyMongo
 
-database_name = 'user'
-mongo_port = "3049"
-
 app = Flask(__name__)
-app.config['MONGO_URI'] = f'mongodb://localhost:{mongo_port}/{database_name}'
+
+# set database and collection names
+database_name = 'usersdb'
+collection_name = 'Info'
+
+# set up database connection
+app.config['MONGO_URI'] = f'mongodb://localhost/{database_name}'
 mongo = PyMongo(app)
 
 
@@ -15,7 +18,11 @@ mongo = PyMongo(app)
 # GET /users Endpoint - Returns a list of all users.
 @app.route('/users', methods=['GET'])
 def get_all_users():
-    print("Returns a list of all users.")
+    users = mongo.db[collection_name].find()
+    output = []
+    for user in users:
+        output.append({'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']})
+    return jsonify({'result': output})
 
 
 
