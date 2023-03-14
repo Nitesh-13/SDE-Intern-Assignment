@@ -1,0 +1,33 @@
+
+# GET /users Endpoint - Returns a list of all users.
+GET http://localhost:5000/users
+
+
+# GET /users/<id> Endpoint - Returns the user with the specified ID.
+GET http://localhost:5000/users/4
+
+
+# POST /users Endpoint - Creates a new user with the specified data.
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "id": 4,
+    "name": "ABC DEF",
+    "email": "abc@example.com",
+    "password": "password000"
+}
+
+
+# PUT /users/<id> - Updates the user with the specified ID with the new data
+PUT http://localhost:5000/users/5
+Content-Type: application/json
+
+{
+    "name": "DEF Doe",
+    "email": "test@mail.com"
+}
+
+
+# DELETE /users/<id> - Deletes the user with the specified ID
+DELETE http://localhost:5000/users/4
