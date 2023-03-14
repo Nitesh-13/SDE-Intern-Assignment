@@ -98,7 +98,17 @@ def update_user(id):
 # DELETE /users/<id> Endpoint - Deletes the user with the specified ID.
 @app.route('/users/<id>', methods=['DELETE'])
 def delete_user(id):
-    print("Deletes the user with the specified ID.")
+    try:
+        user = mongo.db[collection_name].find_one({'id': int(id)})
+        if user:
+            mongo.db[collection_name].delete_one({'id': int(id)})
+            output = "User deleted successfully"
+        else:
+            output = "User not found!"
+    except Exception as e:
+        output = f"Some error has occurred: {e}"
+    return jsonify({'result': output})
+
 
 
 
