@@ -37,8 +37,9 @@ def get_all_users():
 def get_user(id):
     try:
         user = mongo.db[collection_name].find_one({'id':int(id)})
+        output = []
         if user:
-            output = {'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']}
+            output.append({'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']})
         else:
             output = "User not found!"
     except Exception as e:
