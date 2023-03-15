@@ -37,6 +37,30 @@ class User(Resource):
 
 
 
+    # POST /users Endpoint - Creates a new user with the specified data.
+    def post(self):
+        try:
+            parser = reqparse.RequestParser()
+            parser.add_argument('id', type=int, required=True)
+            parser.add_argument('name', type=str, required=True)
+            parser.add_argument('email', type=str, required=True)
+            parser.add_argument('password', type=str, required=True)
+            args = parser.parse_args()
+            id = args['id']
+            name = args['name']
+            email = args['email']
+            password = args['password']
+            user = mongo.db[collection_name].find_one({'id': int(id)})
+            if user:
+                output = "User already exists"
+            else:
+                mongo.db[collection_name].insert_one({'id': id, 'name': name, 'email': email, 'password': password})
+                output = "User added successfully"
+        except Exception as e:
+            output = f"Some error has occurred: {e}"
+        return jsonify({'result': output})
+
+
 api.add_resource(User, '/users', endpoint='users')
 
 
