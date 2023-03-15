@@ -13,8 +13,6 @@ collection_name = 'Info'
 app.config['MONGO_URI'] = f'mongodb://localhost/{database_name}'
 mongo = PyMongo(app)
 
-
-
 class User(Resource):
 
     # GET /users Endpoint
@@ -34,7 +32,6 @@ class User(Resource):
         except Exception as e:
             output = f"Some error has occurred: {e}"
         return jsonify({'result': output})
-
 
 
     # POST /users Endpoint - Creates a new user with the specified data.
@@ -61,51 +58,46 @@ class User(Resource):
         return jsonify({'result': output})
 
 
+    # PUT /users/<id> - Updates the user with the specified ID with the new data
+    def put(self, id):
+        try:
+            user = mongo.db[collection_name].find_one({'id': int(id)})
+            if user:
+                parser = reqparse.RequestParser()
+                parser.add_argument('name', type=str)
+                parser.add_argument('email', type=str)
+                parser.add_argument('password', type=str)
+                args = parser.parse_args()
+                name = args.get('name', user.get('name'))
+                email = args.get('email', user.get('email'))
+                password = args.get('password', user.get('password'))
+                mongo.db[collection_name].update_one(
+                    {'id': id},
+                    {'$set': {'name': name, 'email': email, 'password': password}}
+                )
+                output = "User updated successfully"
+            else:
+                output = "User not found!"
+        except Exception as e:
+            output = f"Some error has occurred: {e}"
+        return jsonify({'result': output})
 
-        # PUT /users/<id> - Updates the user with the specified ID with the new data
-        def put(self, id):
-            try:
-                user = mongo.db[collection_name].find_one({'id': int(id)})
-                if user:
-                    parser = reqparse.RequestParser()
-                    parser.add_argument('name', type=str)
-                    parser.add_argument('email', type=str)
-                    parser.add_argument('password', type=str)
-                    args = parser.parse_args()
-                    name = args.get('name', user.get('name'))
-                    email = args.get('email', user.get('email'))
-                    password = args.get('password', user.get('password'))
-                    mongo.db[collection_name].update_one(
-                        {'id': id},
-                        {'$set': {'name': name, 'email': email, 'password': password}}
-                    )
-                    output = "User updated successfully"
-                else:
-                    output = "User not found!"
-            except Exception as e:
-                output = f"Some error has occurred: {e}"
-            return jsonify({'result': output})
 
-
-        # DELETE /users/<id> - Deletes the user with the specified ID
-        def delete(self, id):
-            try:
-                user = mongo.db[collection_name].find_one({'id': int(id)})
-                if user:
-                    mongo.db[collection_name].delete_one({'id': int(id)})
-                    output = "User deleted successfully"
-                else:
-                    output = "User not found!"
-            except Exception as e:
-                output = f"Some error has occurred: {e}"
-            return jsonify({'result': output})
-
+    # DELETE /users/<id> - Deletes the user with the specified ID
+    def delete(self, id):
+        try:
+            user = mongo.db[collection_name].find_one({'id': int(id)})
+            if user:
+                mongo.db[collection_name].delete_one({'id': int(id)})
+                output = "User deleted successfully"
+            else:
+                output = "User not found!"
+        except Exception as e:
+            output = f"Some error has occurred: {e}"
+        return jsonify({'result': output})
 
 api.add_resource(User, '/users', endpoint='users')
 api.add_resource(User, '/users/<int:id>', endpoint='user')
 
-
-
-# Start the Flask Application
 if __name__ == '__main__':
-    app.run(debug=True,port=5000)
+    app.run(debug=True)
