@@ -61,6 +61,32 @@ class User(Resource):
         return jsonify({'result': output})
 
 
+
+        # PUT /users/<id> - Updates the user with the specified ID with the new data
+        def put(self, id):
+            try:
+                user = mongo.db[collection_name].find_one({'id': int(id)})
+                if user:
+                    parser = reqparse.RequestParser()
+                    parser.add_argument('name', type=str)
+                    parser.add_argument('email', type=str)
+                    parser.add_argument('password', type=str)
+                    args = parser.parse_args()
+                    name = args.get('name', user.get('name'))
+                    email = args.get('email', user.get('email'))
+                    password = args.get('password', user.get('password'))
+                    mongo.db[collection_name].update_one(
+                        {'id': id},
+                        {'$set': {'name': name, 'email': email, 'password': password}}
+                    )
+                    output = "User updated successfully"
+                else:
+                    output = "User not found!"
+            except Exception as e:
+                output = f"Some error has occurred: {e}"
+            return jsonify({'result': output})
+
+
 api.add_resource(User, '/users', endpoint='users')
 
 
