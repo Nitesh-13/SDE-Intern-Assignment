@@ -102,6 +102,8 @@ class User(Resource):
 
 
 api.add_resource(User, '/users', endpoint='users')
+api.add_resource(User, '/users/<int:id>', endpoint='user')
+
 
 
 # Start the Flask Application
