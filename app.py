@@ -18,15 +18,15 @@ class User(Resource):
     # GET /users Endpoint
     def get(self, id=None):
         try:
+            output = []
             if id:
                 user = mongo.db[collection_name].find_one({'id':int(id)})
                 if user:
-                    output = {'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']}
+                    output.append({'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']})
                 else:
                     output = "User not found!"
             else:
                 users = mongo.db[collection_name].find()
-                output = []
                 for user in users:
                     output.append({'id': user['id'], 'name': user['name'], 'email': user['email'], 'password': user['password']})
         except Exception as e:
@@ -64,18 +64,25 @@ class User(Resource):
             user = mongo.db[collection_name].find_one({'id': int(id)})
             if user:
                 parser = reqparse.RequestParser()
-                parser.add_argument('name', type=str)
-                parser.add_argument('email', type=str)
-                parser.add_argument('password', type=str)
+                parser.add_argument('name', type=str, location='json')
+                parser.add_argument('email', type=str, location='json')
+                parser.add_argument('password', type=str, location='json')
                 args = parser.parse_args()
-                name = args.get('name', user.get('name'))
-                email = args.get('email', user.get('email'))
-                password = args.get('password', user.get('password'))
-                mongo.db[collection_name].update_one(
-                    {'id': id},
-                    {'$set': {'name': name, 'email': email, 'password': password}}
-                )
-                output = "User updated successfully"
+                update_dict = {}
+                if args['name'] is not None:
+                    update_dict['name'] = args['name']
+                if args['email'] is not None:
+                    update_dict['email'] = args['email']
+                if args['password'] is not None:
+                    update_dict['password'] = args['password']
+                if update_dict:
+                    mongo.db[collection_name].update_one(
+                        {'id': id},
+                        {'$set': update_dict}
+                    )
+                    output = "User updated successfully"
+                else:
+                    output = "No fields provided for update"
             else:
                 output = "User not found!"
         except Exception as e:
