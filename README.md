@@ -13,7 +13,7 @@ This repository contains a flask application which implements api endpoints for 
 1. First clone this repository
 
 ```bash
-git clone https://github.com/Nitesh-13/Python-openai.git
+git clone https://github.com/Nitesh-13/SDE-Intern-Assignment
 ```
 
 2. Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the modules necessary for the flask application to run.
