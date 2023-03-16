@@ -107,4 +107,4 @@ api.add_resource(User, '/users', endpoint='users')
 api.add_resource(User, '/users/<int:id>', endpoint='user')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=5000,host="0.0.0.0")
